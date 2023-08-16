@@ -8,3 +8,8 @@ An Android app that connects using Retrofit and displays information using Recyc
 - `sudo node server.js`
 
 Ready to go
+
+# TODO
+- Needs a UI implementation to handle CRUD. (only INSERT is enable unti now)
+- Needs a security implementation to handle access to CRUD operations on API.
+- Needs a UI improvements. 
