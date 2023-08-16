@@ -10,6 +10,7 @@ An Android app that connects using Retrofit and displays information using Recyc
 Ready to go
 
 # TODO
-- Needs a UI implementation to handle CRUD. (only INSERT is enable unti now)
-- Needs a security implementation to handle access to CRUD operations on API.
-- Needs a UI improvements. 
+
+- Need a UI implementation to handle CRUD. (only INSERT available at the moment)
+- Need a security implementation to handle access to CRUD operations on the API.
+- Needs general UI improvements.
