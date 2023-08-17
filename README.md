@@ -11,9 +11,10 @@ Ready to go
 
 # TODO
 
-- Need a security implementation to handle access to CRUD operations on the API.
-- Needs general UI improvements.
+- Implement access control to CRUD operations in the API.
+- General UI improvements. 
   
 # Achievements
-- UI implementation to handle CRUD operations.
-- Cleaned code.
+
+- Implementation of UI for CRUD operations in the API.
+- Clean code.
