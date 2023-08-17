@@ -16,5 +16,7 @@ Ready to go
   
 # Achievements
 
+- Storing data using SQLite3.
 - Implementation of UI for CRUD operations in the API.
+- Functional CRUD operations.
 - Clean code.
