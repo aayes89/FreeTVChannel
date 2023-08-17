@@ -11,6 +11,9 @@ Ready to go
 
 # TODO
 
-- Need a UI implementation to handle CRUD. (only INSERT available at the moment)
 - Need a security implementation to handle access to CRUD operations on the API.
 - Needs general UI improvements.
+  
+# Achievements
+- UI implementation to handle CRUD operations.
+- Cleaned code.
