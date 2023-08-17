@@ -1,4 +1,3 @@
-
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -6,7 +5,7 @@ const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3');
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8081;
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -38,40 +37,32 @@ const db = new sqlite3.Database('channels.db', sqlite3.OPEN_READWRITE | sqlite3.
     console.error(err.message);
   } else {
     console.log('Conexión a la base de datos SQLite exitosa.');
-    // Crea la tabla si no existe
     db.run(`CREATE TABLE IF NOT EXISTS channels (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       description TEXT,
       url TEXT,
       icon TEXT
-    )`);
+    )`, (err) => {
+      if (err) {
+        console.error(err.message);
+      } else {
+        console.log('Tabla de canales creada.');
+        
+        // Check if channels are already inserted
+        const checkQuery = 'SELECT COUNT(*) AS count FROM channels';
 
-    // Inserta los canales estáticos en la base de datos
-    const insertStaticChannels = channels.map(channel => {
-      return new Promise((resolve, reject) => {
-        const insertQuery = 'INSERT INTO channels (name, description, url, icon) VALUES (?, ?, ?, ?)';
-        const values = [channel.name, channel.description, channel.url, channel.icon];
-	
-        db.run(insertQuery, values, function (err) {
+        db.get(checkQuery, [], (err, row) => {
           if (err) {
             console.error(err.message);
-            reject(err);
           } else {
-            console.log(`Agregado canal estático con ID: ${this.lastID}`);
-            resolve(this.lastID);
+            if (row.count === 0) {
+              insertStaticChannels();
+            }
           }
         });
-      });
+      }
     });
-
-    Promise.all(insertStaticChannels)
-      .then(() => {
-        console.log('Canales estáticos insertados en la base de datos.');
-      })
-      .catch(err => {
-        console.error('Error al insertar canales estáticos:', err);
-      });
   }
 });
 
@@ -82,28 +73,28 @@ const channels = [
     name: 'Discovery',
     description: 'Discovery Channel en español',
     url: 'https://www.twitch.tv/dt_yy83',
-    icon: `http://${serverIP}:8080/icons/discovery.png`,
+    icon: `http://${serverIP}:${PORT}/icons/discovery.png`,
   },
   {
     id: 2,
     name: 'HBO 2',
     description: 'HBO2 en español',
     url: 'https://www.twitch.tv/daxtr5gtx',
-    icon: `http://${serverIP}:8080/icons/hbo2.png`,
+    icon: `http://${serverIP}:${PORT}/icons/hbo2.png`,
   },
   {
-   id: 3,
-   name: 'History',
-   description: 'History Channel en español',
-   url: 'https://www.twitch.tv/vdt_5ltt',
-   icon: `http://${serverIP}:8080/icons/history.png`,
+    id: 3,
+    name: 'History',
+    description: 'History Channel en español',
+    url: 'https://www.twitch.tv/vdt_5ltt',
+    icon: `http://${serverIP}:${PORT}/icons/history.png`,
   },
   {
-   id: 4,
-   name: 'History 2',
-   description: 'History Channel 2 en español',
-   url: 'https://www.twitch.tv/rr_955rrr',
-   icon: `http://${serverIP}:8080/icons/history.png`,
+    id: 4,
+    name: 'History 2',
+    description: 'History Channel 2 en español',
+    url: 'https://www.twitch.tv/rr_955rrr',
+    icon: `http://${serverIP}:${PORT}/icons/history.png`,
   },
 ];
 
@@ -130,12 +121,12 @@ app.get('/channel', (req, res) => {
 
     if (channel) {
       res.json(channel);
-      console.log('POSTING data from channel: ' + channelId);
+      console.log('Obteniendo datos del canal: ' + channelId);
     } else {
-      res.status(404).json({ error: 'Channel not found' });
+      res.status(404).json({ error: 'Canal no encontrado' });
     }
   } else {
-    res.status(400).json({ error: 'Invalid channel ID' });
+    res.status(400).json({ error: 'ID de canal inválido' });
   }
 });
 
@@ -190,6 +181,34 @@ app.delete('/deleteChannel/:id', (req, res) => {
   });
 });
 
+// Function to insert static channels
+function insertStaticChannels() {
+  const insertStaticPromises = channels.map(channel => {
+    return new Promise((resolve, reject) => {
+      const insertQuery = 'INSERT INTO channels (name, description, url, icon) VALUES (?, ?, ?, ?)';
+      const values = [channel.name, channel.description, channel.url, channel.icon];
+      
+      db.run(insertQuery, values, function (err) {
+        if (err) {
+          console.error(err.message);
+          reject(err);
+        } else {
+          console.log(`Agregado canal estático con ID: ${this.lastID}`);
+          resolve(this.lastID);
+        }
+      });
+    });
+  });
+
+  Promise.all(insertStaticPromises)
+    .then(() => {
+      console.log('Canales estáticos insertados en la base de datos.');
+    })
+    .catch(err => {
+      console.error('Error al insertar canales estáticos:', err);
+    });
+}
+
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`El servidor está funcionando en el puerto ${PORT}`);
 });
